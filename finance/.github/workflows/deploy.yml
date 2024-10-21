@@ -11,23 +11,22 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Deploy to Elastic Beanstalk
+    - name: Deploy to Heroku
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: 'us-east-2'
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
-        pip install awsebcli
-        eb init -p python-3.9 finance --region us-east-2
+         heroku git:remote -a finance-django
+        git push heroku main python-3.9 finance --region us-east-2
         eb deploy
