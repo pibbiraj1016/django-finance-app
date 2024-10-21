@@ -52,13 +52,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'finance.wsgi.application'
 
-# Use dj_database_url to handle database configuration from DATABASE_URL
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://postgres:awspostgres@localhost:5432/finance')
+    'default': dj_database_url.config(
+        default=os.getenv('HEROKU_POSTGRESQL_JADE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
-
-# If Heroku doesn't provide DATABASE_URL, fall back to default RDS
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
