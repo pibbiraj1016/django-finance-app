@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +9,7 @@ SECRET_KEY = 'django-insecure-2ulxen=&=p!+$y%-hblrxj%yr^jw3#_-p1i#o%eh^5xpvnl&ip
 
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'https://finance-django-93f5ce60f767.herokuapp.com/').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -51,18 +52,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'finance.wsgi.application'
 
-
+# Use dj_database_url to handle database configuration from DATABASE_URL
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('finance'),
-        'USER': os.getenv('postgres'),
-        'PASSWORD': os.getenv('awspostgres'),
-        'HOST': os.getenv('database-1.ctkougguyl4s.us-east-1.rds.amazonaws.com'),
-        'PORT': os.getenv('5432'),
-    }
+    'default': dj_database_url.config(default='postgres://postgres:awspostgres@localhost:5432/finance')
 }
 
+# If Heroku doesn't provide DATABASE_URL, fall back to default RDS
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -78,6 +74,10 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+import django_heroku
+django_heroku.settings(locals())
+
 
 
 LANGUAGE_CODE = 'en-us'
