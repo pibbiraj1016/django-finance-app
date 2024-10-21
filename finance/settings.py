@@ -77,7 +77,9 @@ django_heroku.settings(locals())
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+MIDDLEWARE = list(MIDDLEWARE)  # Convert tuple to list
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')  # Insert the middleware
+MIDDLEWARE = tuple(MIDDLEWARE)  # Convert it back to a tuple
 
 LANGUAGE_CODE = 'en-us'
 
